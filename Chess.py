@@ -2,13 +2,12 @@ import pygame
 import sys
 import os
 
-pygam.init()
+pygame.init()
 
 _image_library = {}
+v = 1
 def get_image(path):
         global _image_library
-        global v
-        v = 0.9
         image = _image_library.get(path)
         if image == None:
                 canonicalized_path = path.replace('/', os.sep).replace('\\', os.sep)
@@ -17,9 +16,14 @@ def get_image(path):
                 _image_library[path] = image
         return image
 
+def blit(png, x, y):
+    screen.blit(get_image(png), ((SWidth/2) - v * (img.get_width()/x), (SHeight/2) - v * (img.get_height()/y)))
+
 screen = pygame.display.set_mode((900, 750), pygame.RESIZABLE)
 img = pygame.image.load('ImageCalibrator1.png').convert()
 pressed = pygame.key.get_pressed()
+done = False
+Quit = False
 
 while not done:
     #Mouse Coordinates
@@ -30,7 +34,13 @@ while not done:
 
     screen.fill((255, 255, 255))
 
-    for event in pygame.get():
+    blit('Board.png', 2, 2)
+
+    pygame.display.update()
+
+    for event in pygame.event.get():
+        if event.type == pygame.MOUSEBUTTONDOWN:
+            pass
         if event.type == pygame.QUIT or Quit == True:
             done = True
             pygame.quit()

@@ -19,8 +19,11 @@ def get_image(path):
 def blit(png, x, y):
     screen.blit(get_image(png), ((SWidth/2) - v * (img.get_width()/x), (SHeight/2) - v * (img.get_height()/y)))
 
+def draw(x, y, w, h):
+    pygame.draw.rect(screen, (255, 155, 155), [(SWidth/2) - v * (img.get_width()/x), (SHeight/2) - v * (img.get_height()/y), img.get_width()/w, img.get_height()/h])
+
 screen = pygame.display.set_mode((900, 750), pygame.RESIZABLE)
-img = pygame.image.load('ImageCalibrator1.png').convert()
+img = pygame.image.load('C:\PythonPrograms\Chess\ImageCalibrator1.png').convert()
 pressed = pygame.key.get_pressed()
 done = False
 Quit = False
@@ -34,7 +37,9 @@ while not done:
 
     screen.fill((255, 255, 255))
 
-    blit('Board.png', 2, 2)
+    blit('C:\PythonPrograms\Chess\Board.png', 2, 2)
+
+    draw(2.66, 10, 10, 10)
 
     pygame.display.update()
 

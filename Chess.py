@@ -4,9 +4,9 @@ import os
 
 pygame.init()
 
-_image_library = {}
-v = 1
-def get_image(path):
+_image_library = {} #images already used
+v = 1 #scale
+def get_image(path): #loads an image from given path
         global _image_library
         image = _image_library.get(path)
         if image == None:
@@ -16,16 +16,16 @@ def get_image(path):
                 _image_library[path] = image
         return image
 
-def blit(png, x, y, addposx, addposy, addmovx, addmovy):
+def blit(png, x, y, addposx, addposy, addmovx, addmovy): #blits an image (duh)
     if addposx != None and addposy != None:
         screen.blit(get_image(png), ((SWidth/2) - v * (img.get_width()/x) + addposx * img.get_width()/10.5 + addmovx, (SHeight/2) - v * (img.get_height()/y) + addposy * img.get_height()/8 + addmovy))
     else:
         pass
 
-def draw(x, y, w, h):
+def draw(x, y, w, h): #only used for finding square positions prolly not necessary anymoar
     pygame.draw.rect(screen, (255, 155, 155), [(SWidth/2) - v * (img.get_width()/x), (SHeight/2) - v * (img.get_height()/y), img.get_width()/w, img.get_height()/h])
 
-def square(x, y):
+def square(x, y): #find what square the mouse is on
     pos = [0, 0]
 
     if x >= (SWidth/2) - v * (img.get_width()/2.66) and x <= (SWidth/2) - v * (img.get_width()/2.66) + img.get_width()/10.5:
@@ -66,26 +66,36 @@ def square(x, y):
     else:
         pos[1] = None
 
+    #frickin' python doesn't have switch statements
+
     return pos
 
-def move(piece):
-    if square(Mouse_x, Mouse_y) == [piece['pos'][0], piece['pos'][1]] and click:
-        global addStatic
-        addStatic = [Mouse_x, Mouse_y]
-        piece['lifted'] = True
+class Actor: #basically chess piece
+    def __init__(self, position, moved, lifted, piece):
+        self.pos = position #position of piece on board
+        self.mov = moved #position of piece when being lifted and moved
+        self.lif = lifted #piece is lifted or not
+        self.piece = piece #type of piece
 
-    if piece['lifted'] and not click:
-        piece['pos'][0] = square(Mouse_x, Mouse_y)[0]
-        piece['pos'][1] = square(Mouse_x, Mouse_y)[1]
-        piece['lifted'] = False
+    def move(self): #for moving the piece
+        if square(Mouse_x, Mouse_y) == [self.pos[0], self.pos[1]] and click: #if mouse is on same square as piece and mouse is clicked
+            global addStatic
+            addStatic = [Mouse_x, Mouse_y] #anchor for adding value to piece position
+            self.lif = True #piece is lifted
 
-def show(piece):
-    if piece['lifted']:
-        add[0] = Mouse_x - addStatic[0]
-        add[1] = Mouse_y - addStatic[1]
-        blit('C:\PythonPrograms\Chess\Rook.png', 1.2, 1.065, piece['pos'][0], piece['pos'][1], add[0], add[1])
-    else:
-        blit('C:\PythonPrograms\Chess\Rook.png', 1.2, 1.065, piece['pos'][0], piece['pos'][1], 0, 0)
+        if self.lif and not click: #piece is put down
+            self.pos[0] = square(Mouse_x, Mouse_y)[0]
+            self.pos[1] = square(Mouse_x, Mouse_y)[1] #center piece on square
+            self.lif = False #piece is not lifted anymoar
+
+class Rook(Actor): #Rook (duh)
+    def show(self): #blits image
+        if self.lif:
+            add[0] = Mouse_x - addStatic[0]
+            add[1] = Mouse_y - addStatic[1]
+            blit('C:\PythonPrograms\Chess\{0}.png'.format(self.piece), 1.2, 1.065, self.pos[0], self.pos[1], add[0], add[1])
+        else:
+            blit('C:\PythonPrograms\Chess\{0}.png'.format(self.piece), 1.2, 1.065, self.pos[0], self.pos[1], 0, 0)
 
 screen = pygame.display.set_mode((900, 750), pygame.RESIZABLE)
 img = pygame.image.load('C:\PythonPrograms\Chess\ImageCalibrator1.png').convert()
@@ -96,17 +106,9 @@ add = [0, 0]
 addStatic = [0, 0]
 click = False
 
-wRookLeft = {
-    'lifted': False,
-    'pos': [0, 7],
-    'mov': [0, 0]
-}
+wRookLeft = Rook([0, 7], [0, 0], False, 'Rook')
 
-wRookRight = {
-    'lifted': False,
-    'pos': [7, 7],
-    'mov': [0, 0]
-}
+wRookRight = Rook([7, 7], [0, 0], False, 'Rook')
 
 while not done:
     #Mouse Coordinates
@@ -119,9 +121,9 @@ while not done:
 
     blit('C:\PythonPrograms\Chess\Board.png', 2, 2, 0, 0, 0, 0)
 
-    show(wRookLeft)
+    wRookLeft.show()
 
-    show(wRookRight)
+    wRookRight.show()
 
     pygame.display.update()
 
@@ -132,9 +134,9 @@ while not done:
             else:
                 click = True
 
-            move(wRookLeft)
+            wRookLeft.move()
 
-            move(wRookRight)
+            wRookRight.move()
 
         if event.type == pygame.QUIT or Quit == True:
             done = True

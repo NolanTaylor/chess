@@ -78,24 +78,51 @@ class Actor: #basically chess piece
         self.piece = piece #type of piece
 
     def move(self): #for moving the piece
+
+        global placing
+
         if square(Mouse_x, Mouse_y) == [self.pos[0], self.pos[1]] and click: #if mouse is on same square as piece and mouse is clicked
             global addStatic
+            global current #didn't take me half an hour to figure out current was a global variable
             addStatic = [Mouse_x, Mouse_y] #anchor for adding value to piece position
+            current = self.piece #piece currently being moved in str() form
             self.lif = True #piece is lifted
+            board[tuple(square(Mouse_x, Mouse_y))] = 0
+            placing = True #i dont know wut i did but its working so dont touch it
 
         if self.lif and not click: #piece is put down
             self.pos[0] = square(Mouse_x, Mouse_y)[0]
             self.pos[1] = square(Mouse_x, Mouse_y)[1] #center piece on square
             self.lif = False #piece is not lifted anymoar
+            board[tuple(square(Mouse_x, Mouse_y))] = eval(self.piece)
+            current = 0
 
 class Rook(Actor): #Rook (duh)
     def show(self): #blits image
         if self.lif:
             add[0] = Mouse_x - addStatic[0]
             add[1] = Mouse_y - addStatic[1]
-            blit('C:\PythonPrograms\Chess\{0}.png'.format(self.piece), 1.2, 1.065, self.pos[0], self.pos[1], add[0], add[1])
+            blit('C:\PythonPrograms\Chess\Rook.png', 1.2, 1.065, self.pos[0], self.pos[1], add[0], add[1])
         else:
-            blit('C:\PythonPrograms\Chess\{0}.png'.format(self.piece), 1.2, 1.065, self.pos[0], self.pos[1], 0, 0)
+            blit('C:\PythonPrograms\Chess\Rook.png', 1.2, 1.065, self.pos[0], self.pos[1], 0, 0)
+
+    def light(self): #find movable squares (function name refers to the list of squares to be lit up)
+
+        light = [] #squares to be lit
+
+        for i in range(self.pos[0]): #squares to left
+            light.append([self.pos[0] - 1 - i, self.pos[1]])
+
+        for i in range(7 - self.pos[0]): #squares to right
+            light.append([self.pos[0] + 1 + i, self.pos[1]])
+
+        for j in range(self.pos[1]): #sqaures above (down)
+            light.append([self.pos[0], self.pos[1] - 1 - j])
+        
+        for j in range(7 - self.pos[1]): #sqaures below (up)
+            light.append([self.pos[0], self.pos[1] + 1 + j])
+
+        return light
 
 screen = pygame.display.set_mode((900, 750), pygame.RESIZABLE)
 img = pygame.image.load('C:\PythonPrograms\Chess\ImageCalibrator1.png').convert()
@@ -105,10 +132,26 @@ Quit = False
 add = [0, 0]
 addStatic = [0, 0]
 click = False
+current = 0
+placing = False
+light = []
 
-wRookLeft = Rook([0, 7], [0, 0], False, 'Rook')
+board = {}
 
-wRookRight = Rook([7, 7], [0, 0], False, 'Rook')
+for i in range(8):
+    for j in range(8):
+        board[(i, j)] = 0
+
+wRookLeft = Rook([0, 7], [0, 0], False, 'wRookLeft')
+wRookRight = Rook([7, 7], [0, 0], False, 'wRookRight')
+
+pieces = [
+    wRookLeft,
+    wRookRight,
+]
+
+for piece in pieces:
+    board[tuple(piece.pos)] = piece
 
 while not done:
     #Mouse Coordinates
@@ -121,22 +164,35 @@ while not done:
 
     blit('C:\PythonPrograms\Chess\Board.png', 2, 2, 0, 0, 0, 0)
 
-    wRookLeft.show()
+    if light and current:
+        for square_x, square_y in light:
+            blit('C:\PythonPrograms\Chess\Green.png', 1.2, 1.065, square_x, square_y, 0, 0)
+    elif current:
+        light = eval(current).light()
+    else:
+        if light:
+            light.clear()
 
-    wRookRight.show()
+    for piece in pieces:
+        piece.show()
 
     pygame.display.update()
 
     for event in pygame.event.get():
         if event.type == pygame.MOUSEBUTTONDOWN:
-            if click:
-                click = False
-            else:
-                click = True
+            if board[tuple(square(Mouse_x, Mouse_y))] or placing:
+                if click:
+                    click = False
+                else:
+                    click = True
 
-            wRookLeft.move()
+                placing = False
 
-            wRookRight.move()
+            if board[tuple(square(Mouse_x, Mouse_y))]:
+                board[tuple(square(Mouse_x, Mouse_y))].move()
+
+            if current:
+                eval(current).move()
 
         if event.type == pygame.QUIT or Quit == True:
             done = True

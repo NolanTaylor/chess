@@ -71,13 +71,13 @@ def square(x, y): #find what square the mouse is on
     return pos
 
 class Actor: #basically chess piece
-    def __init__(self, position, moved, lifted, piece, color, alive):
+    def __init__(self, position, piece, color):
         self.pos = position #position of piece on board
-        self.mov = moved #position of piece when being lifted and moved
-        self.lif = lifted #piece is lifted or not
+        self.mov = [0, 0] #position of piece when being lifted and moved
+        self.lif = False #piece is lifted or not
         self.piece = piece #type of piece
         self.color = color #color of piece
-        self.alive = alive #piece alive?
+        self.alive = True #piece alive?
 
     def move(self): #for moving the piece
 
@@ -114,49 +114,49 @@ class Rook(Actor): #Rook (duh)
         if self.lif:
             add[0] = Mouse_x - addStatic[0]
             add[1] = Mouse_y - addStatic[1]
-            blit('C:\PythonPrograms\Chess\{0}.png'.format(self.piece), 1.2, 1.065, self.pos[0], self.pos[1], add[0], add[1])
+            blit('C:\PythonPrograms\Chess\images\{0}.png'.format(self.piece), 1.2, 1.065, self.pos[0], self.pos[1], add[0], add[1])
         else:
-            blit('C:\PythonPrograms\Chess\{0}.png'.format(self.piece), 1.2, 1.065, self.pos[0], self.pos[1], 0, 0)
+            blit('C:\PythonPrograms\Chess\images\{0}.png'.format(self.piece), 1.2, 1.065, self.pos[0], self.pos[1], 0, 0)
 
     def light(self): #no longer lights up squares but too efficient (lazy) to change the name
 
         light = [] #squares to be lit
 
         for i in range(self.pos[0]): #squares to left
-            if not board[tuple([self.pos[0] - 1 - i, self.pos[1]])]:
+            if not board[(self.pos[0] - 1 - i, self.pos[1])]:
                 light.append([self.pos[0] - 1 - i, self.pos[1]])
             else:
-                if self.color == board[tuple([self.pos[0] - 1 - i, self.pos[1]])].color:
+                if self.color == board[(self.pos[0] - 1 - i, self.pos[1])].color:
                     break
                 else:
                     light.append([self.pos[0] - 1 - i, self.pos[1]])
                     break
 
         for i in range(7 - self.pos[0]): #squares to right
-            if not board[tuple([self.pos[0] + 1 + i, self.pos[1]])]:
+            if not board[(self.pos[0] + 1 + i, self.pos[1])]:
                 light.append([self.pos[0] + 1 + i, self.pos[1]])
             else:
-                if self.color == board[tuple([self.pos[0] + 1 + i, self.pos[1]])].color:
+                if self.color == board[(self.pos[0] + 1 + i, self.pos[1])].color:
                     break
                 else:
                     light.append([self.pos[0] + 1 + i, self.pos[1]])
                     break
 
         for j in range(self.pos[1]): #sqaures above (down)
-            if not board[tuple([self.pos[0], self.pos[1] - 1 - j])]:
+            if not board[(self.pos[0], self.pos[1] - 1 - j)]:
                 light.append([self.pos[0], self.pos[1] - 1 - j])
             else:
-                if self.color == board[tuple([self.pos[0], self.pos[1] - 1 - j])].color:
+                if self.color == board[(self.pos[0], self.pos[1] - 1 - j)].color:
                     break
                 else:
                     light.append([self.pos[0], self.pos[1] - 1 - j])
                     break
         
         for j in range(7 - self.pos[1]): #sqaures below (up)
-            if not board[tuple([self.pos[0], self.pos[1] + 1 + j])]:
+            if not board[(self.pos[0], self.pos[1] + 1 + j)]:
                 light.append([self.pos[0], self.pos[1] + 1 + j])
             else:
-                if self.color == board[tuple([self.pos[0], self.pos[1] + 1 + j])].color:
+                if self.color == board[(self.pos[0], self.pos[1] + 1 + j)].color:
                     break
                 else:
                     light.append([self.pos[0], self.pos[1] + 1 + j])
@@ -164,8 +164,83 @@ class Rook(Actor): #Rook (duh)
 
         return light
 
+class Bishop(Actor):
+    def show(self):
+        if self.lif:
+            add[0] = Mouse_x - addStatic[0]
+            add[1] = Mouse_y - addStatic[1]
+            blit('C:\PythonPrograms\Chess\images\{0}.png'.format(self.piece), 1.2, 1.065, self.pos[0], self.pos[1], add[0], add[1])
+        else:
+            blit('C:\PythonPrograms\Chess\images\{0}.png'.format(self.piece), 1.2, 1.065, self.pos[0], self.pos[1], 0, 0)
+
+    def light(self):
+        
+        light = []
+
+        if self.pos[0] <= self.pos[1]:
+            m = self.pos[0]
+        elif self.pos[0] > self.pos[1]:
+            m = self.pos[1]
+
+        for p in range(m): #upper left direction
+            if not board[(self.pos[0] - (p + 1), self.pos[1] - (p + 1))]:
+                light.append([self.pos[0] - (p + 1), self.pos[1] - (p + 1)])
+            else:
+                if self.color == board[(self.pos[0] - (p + 1), self.pos[1] - (p + 1))].color:
+                    break
+                else:
+                    light.append([self.pos[0] - (p + 1), self.pos[1] - (p + 1)])
+                    break
+
+        if self.pos[0] <= 7 - self.pos[1]:
+            m = self.pos[1]
+        elif self.pos[0] > 7 - self.pos[1]:
+            m = 7 - self.pos[0]
+
+        for p in range(m): #upper right direction
+            if not board[(self.pos[0] + (p + 1), self.pos[1] - (p + 1))]:
+                light.append([self.pos[0] + (p + 1), self.pos[1] - (p + 1)])
+            else:
+                if self.color == board[(self.pos[0] + (p + 1), self.pos[1] - (p + 1))].color:
+                    break
+                else:
+                    light.append([self.pos[0] + (p + 1), self.pos[1] - (p + 1)])
+                    break
+
+        if self.pos[0] <= 7 - self.pos[1]:
+            m = self.pos[0]
+        elif self.pos[0] > 7 - self.pos[1]:
+            m = 7 - self.pos[1]
+            
+        for p in range(m): #lower left direction
+            if not board[(self.pos[0] - (p + 1), self.pos[1] + (p + 1))]:
+                light.append([self.pos[0] - (p + 1), self.pos[1] + (p + 1)])
+            else:
+                if self.color == board[(self.pos[0] - (p + 1), self.pos[1] + (p + 1))].color:
+                    break
+                else:
+                    light.append([self.pos[0] - (p + 1), self.pos[1] + (p + 1)])
+                    break
+
+        if self.pos[0] <= self.pos[1]:
+            m = self.pos[1]
+        elif self.pos[0] > self.pos[1]:
+            m = self.pos[0]
+
+        for p in range(7 - m): #lower right direction
+            if not board[(self.pos[0] + (p + 1), self.pos[1] + (p + 1))]:
+                light.append([self.pos[0] + (p + 1), self.pos[1] + (p + 1)])
+            else:
+                if self.color == board[(self.pos[0] + (p + 1), self.pos[1] + (p + 1))]:
+                    break
+                else:
+                    light.append([self.pos[0] + (p + 1), self.pos[1] + (p + 1)])
+                    break
+
+        return light
+
 screen = pygame.display.set_mode((900, 750), pygame.RESIZABLE)
-img = pygame.image.load('C:\PythonPrograms\Chess\ImageCalibrator1.png').convert()
+img = pygame.image.load('C:\PythonPrograms\Chess\images\ImageCalibrator1.png').convert()
 pressed = pygame.key.get_pressed()
 done = False
 Quit = False
@@ -177,16 +252,24 @@ placing = False
 light = []
 
 #1 == 'white'; 0 == 'black';
-wRookLeft = Rook([0, 7], [0, 0], False, 'wRookLeft', 1, True)
-wRookRight = Rook([7, 7], [0, 0], False, 'wRookRight', 1, True)
-bRookLeft = Rook([0, 0], [0, 0], False, 'bRookLeft', 0, True)
-bRookRight = Rook([7, 0], [0, 0], False, 'bRookRight', 0, True)
+wRookLeft = Rook([0, 7], 'wRookLeft', 1)
+wRookRight = Rook([7, 7], 'wRookRight', 1)
+bRookLeft = Rook([0, 0], 'bRookLeft', 0)
+bRookRight = Rook([7, 0], 'bRookRight', 0)
+wBishopLeft = Bishop([2, 7], 'wBishopLeft', 1)
+wBishopRight = Bishop([5, 7], 'wBishopRight', 1)
+bBishopLeft = Bishop([2, 0], 'bBishopLeft', 0)
+bBishopRight = Bishop([5, 0], 'bBishopRight', 0)
 
 pieces = [
     wRookLeft,
     wRookRight,
     bRookLeft,
     bRookRight,
+    wBishopLeft,
+    wBishopRight,
+    bBishopLeft,
+    bBishopRight,
 ]
 
 board = {}
@@ -207,7 +290,7 @@ while not done:
 
     screen.fill((255, 255, 255))
 
-    blit('C:\PythonPrograms\Chess\Board.png', 2, 2, 0, 0, 0, 0)
+    blit('C:\PythonPrograms\Chess\images\Board.png', 2, 2, 0, 0, 0, 0)
 
     for piece in pieces:
         if piece.alive:
@@ -217,19 +300,20 @@ while not done:
 
     for event in pygame.event.get():
         if event.type == pygame.MOUSEBUTTONDOWN:
-            if board[tuple(square(Mouse_x, Mouse_y))] or placing:
-                if click:
-                    click = False
-                else:
-                    click = True
+            if square(Mouse_x, Mouse_y)[0] != None and square(Mouse_x, Mouse_y)[1] != None:
+                if board[tuple(square(Mouse_x, Mouse_y))] or placing:
+                    if click:
+                        click = False
+                    else:
+                        click = True
 
-                placing = False
+                    placing = False
 
-            if board[tuple(square(Mouse_x, Mouse_y))]:
-                board[tuple(square(Mouse_x, Mouse_y))].move()
+                if board[tuple(square(Mouse_x, Mouse_y))]:
+                    board[tuple(square(Mouse_x, Mouse_y))].move()
 
-            if current:
-                eval(current).move()
+                if current:
+                    eval(current).move()
 
         if event.type == pygame.QUIT or Quit == True:
             done = True

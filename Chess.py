@@ -79,6 +79,14 @@ class Actor: #basically chess piece
         self.color = color #color of piece
         self.alive = True #piece alive?
 
+    def show(self):
+        if self.lif:
+            add[0] = Mouse_x - addStatic[0]
+            add[1] = Mouse_y - addStatic[1]
+            blit('C:\PythonPrograms\Chess\images\{0}.png'.format(self.piece), 2.65, 2, self.pos[0], self.pos[1], add[0], add[1])
+        else:
+            blit('C:\PythonPrograms\Chess\images\{0}.png'.format(self.piece), 2.65, 2, self.pos[0], self.pos[1], 0, 0)
+
     def move(self): #for moving the piece
 
         global placing
@@ -110,14 +118,6 @@ class Actor: #basically chess piece
         self.alive = False
 
 class Rook(Actor): #Rook (duh)
-    def show(self): #blits image
-        if self.lif:
-            add[0] = Mouse_x - addStatic[0]
-            add[1] = Mouse_y - addStatic[1]
-            blit('C:\PythonPrograms\Chess\images\{0}.png'.format(self.piece), 1.2, 1.065, self.pos[0], self.pos[1], add[0], add[1])
-        else:
-            blit('C:\PythonPrograms\Chess\images\{0}.png'.format(self.piece), 1.2, 1.065, self.pos[0], self.pos[1], 0, 0)
-
     def light(self): #no longer lights up squares but too efficient (lazy) to change the name
 
         light = [] #squares to be lit
@@ -165,14 +165,6 @@ class Rook(Actor): #Rook (duh)
         return light
 
 class Bishop(Actor):
-    def show(self):
-        if self.lif:
-            add[0] = Mouse_x - addStatic[0]
-            add[1] = Mouse_y - addStatic[1]
-            blit('C:\PythonPrograms\Chess\images\{0}.png'.format(self.piece), 1.2, 1.065, self.pos[0], self.pos[1], add[0], add[1])
-        else:
-            blit('C:\PythonPrograms\Chess\images\{0}.png'.format(self.piece), 1.2, 1.065, self.pos[0], self.pos[1], 0, 0)
-
     def light(self):
         
         light = []
@@ -239,6 +231,31 @@ class Bishop(Actor):
 
         return light
 
+class Knight(Actor):
+    def light(self):
+        
+        light = []
+        movable = [
+            [self.pos[0] - 1, self.pos[1] - 2],
+            [self.pos[0] + 1, self.pos[1] - 2],
+            [self.pos[0] + 2, self.pos[1] - 1],
+            [self.pos[0] + 2, self.pos[1] + 1],
+            [self.pos[0] + 1, self.pos[1] + 2],
+            [self.pos[0] - 1, self.pos[1] + 2],
+            [self.pos[0] - 2, self.pos[1] + 1],
+            [self.pos[0] - 2, self.pos[1] - 1],
+        ]
+
+        for x, y in movable:
+            if (x, y) in board:
+                if board[(x, y)]:
+                    if self.color != board[(x, y)].color:
+                        light.append([x, y])
+                elif board[(x, y)] == 0:
+                    light.append([x, y])
+
+        return light
+
 screen = pygame.display.set_mode((900, 750), pygame.RESIZABLE)
 img = pygame.image.load('C:\PythonPrograms\Chess\images\ImageCalibrator1.png').convert()
 pressed = pygame.key.get_pressed()
@@ -260,6 +277,10 @@ wBishopLeft = Bishop([2, 7], 'wBishopLeft', 1)
 wBishopRight = Bishop([5, 7], 'wBishopRight', 1)
 bBishopLeft = Bishop([2, 0], 'bBishopLeft', 0)
 bBishopRight = Bishop([5, 0], 'bBishopRight', 0)
+wKnightLeft = Knight([1, 7], 'wKnightLeft', 1)
+wKnightRight = Knight([6, 7], 'wKnightRight', 1)
+bKnightLeft = Knight([1, 0], 'bKnightLeft', 0)
+bKnightRight = Knight([6, 0], 'bKnightRight', 0)
 
 pieces = [
     wRookLeft,
@@ -270,6 +291,10 @@ pieces = [
     wBishopRight,
     bBishopLeft,
     bBishopRight,
+    wKnightLeft,
+    wKnightRight,
+    bKnightLeft,
+    bKnightRight,
 ]
 
 board = {}

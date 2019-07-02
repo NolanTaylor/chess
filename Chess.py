@@ -223,7 +223,7 @@ class Bishop(Actor):
             if not board[(self.pos[0] + (p + 1), self.pos[1] + (p + 1))]:
                 light.append([self.pos[0] + (p + 1), self.pos[1] + (p + 1)])
             else:
-                if self.color == board[(self.pos[0] + (p + 1), self.pos[1] + (p + 1))]:
+                if self.color == board[(self.pos[0] + (p + 1), self.pos[1] + (p + 1))].color:
                     break
                 else:
                     light.append([self.pos[0] + (p + 1), self.pos[1] + (p + 1)])
@@ -235,6 +235,7 @@ class Knight(Actor):
     def light(self):
         
         light = []
+
         movable = [
             [self.pos[0] - 1, self.pos[1] - 2],
             [self.pos[0] + 1, self.pos[1] - 2],
@@ -244,6 +245,39 @@ class Knight(Actor):
             [self.pos[0] - 1, self.pos[1] + 2],
             [self.pos[0] - 2, self.pos[1] + 1],
             [self.pos[0] - 2, self.pos[1] - 1],
+        ]
+
+        for x, y in movable:
+            if (x, y) in board:
+                if board[(x, y)]:
+                    if self.color != board[(x, y)].color:
+                        light.append([x, y])
+                elif board[(x, y)] == 0:
+                    light.append([x, y])
+
+        return light
+
+class Queen(Actor):
+    def light(self):
+
+        light = []
+
+        return light
+
+class King(Actor):
+    def light(self):
+
+        light = []
+
+        movable = [
+            [self.pos[0] - 1, self.pos[1]],
+            [self.pos[0] + 1, self.pos[1]],
+            [self.pos[0] - 1, self.pos[1] - 1],
+            [self.pos[0] - 1, self.pos[1] + 1],
+            [self.pos[0] + 1, self.pos[1] - 1],
+            [self.pos[0] + 1, self.pos[1] + 1],
+            [self.pos[0], self.pos[1] - 1],
+            [self.pos[0], self.pos[1] + 1],
         ]
 
         for x, y in movable:
@@ -281,6 +315,10 @@ wKnightLeft = Knight([1, 7], 'wKnightLeft', 1)
 wKnightRight = Knight([6, 7], 'wKnightRight', 1)
 bKnightLeft = Knight([1, 0], 'bKnightLeft', 0)
 bKnightRight = Knight([6, 0], 'bKnightRight', 0)
+wQueen = Queen([4, 7], 'wQueen', 1)
+bQueen = Queen([4, 0], 'bQueen', 0)
+wKing = King([3, 7], 'wKing', 1)
+bKing = King([3, 0], 'bKing', 0)
 
 pieces = [
     wRookLeft,
@@ -295,6 +333,10 @@ pieces = [
     wKnightRight,
     bKnightLeft,
     bKnightRight,
+    wQueen,
+    bQueen,
+    wKing,
+    bKing,
 ]
 
 board = {}

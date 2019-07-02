@@ -79,14 +79,6 @@ class Actor: #basically chess piece
         self.color = color #color of piece
         self.alive = True #piece alive?
 
-    def show(self):
-        if self.lif:
-            add[0] = Mouse_x - addStatic[0]
-            add[1] = Mouse_y - addStatic[1]
-            blit('C:\PythonPrograms\Chess\images\{0}.png'.format(self.piece), 2.65, 2, self.pos[0], self.pos[1], add[0], add[1])
-        else:
-            blit('C:\PythonPrograms\Chess\images\{0}.png'.format(self.piece), 2.65, 2, self.pos[0], self.pos[1], 0, 0)
-
     def move(self): #for moving the piece
 
         global placing
@@ -113,6 +105,8 @@ class Actor: #basically chess piece
 
             self.lif = False #piece is not lifted anymoar
             current = 0
+
+        self.mov = [0, 0]
 
     def kill(self):
         self.alive = False
@@ -163,6 +157,16 @@ class Rook(Actor): #Rook (duh)
                     break
 
         return light
+
+    def show(self):
+        if self.lif:
+            self.mov[0] = Mouse_x - addStatic[0]
+            self.mov[1] = Mouse_y - addStatic[1]
+            
+        if self.color:
+            blit('C:/PythonPrograms/Chess/images/wRook.png', 2.65, 2, self.pos[0], self.pos[1], self.mov[0], self.mov[1])
+        else:
+            blit('C:/PythonPrograms/Chess/images/bRook.png', 2.65, 2, self.pos[0], self.pos[1], self.mov[0], self.mov[1])
 
 class Bishop(Actor):
     def light(self):
@@ -231,6 +235,16 @@ class Bishop(Actor):
 
         return light
 
+    def show(self):
+        if self.lif:
+            self.mov[0] = Mouse_x - addStatic[0]
+            self.mov[1] = Mouse_y - addStatic[1]
+            
+        if self.color:
+            blit('C:/PythonPrograms/Chess/images/wBishop.png', 2.65, 2, self.pos[0], self.pos[1], self.mov[0], self.mov[1])
+        else:
+            blit('C:/PythonPrograms/Chess/images/bBishop.png', 2.65, 2, self.pos[0], self.pos[1], self.mov[0], self.mov[1])
+
 class Knight(Actor):
     def light(self):
         
@@ -257,12 +271,168 @@ class Knight(Actor):
 
         return light
 
+    def show(self):
+        if self.lif:
+            self.mov[0] = Mouse_x - addStatic[0]
+            self.mov[1] = Mouse_y - addStatic[1]
+            
+        if self.color:
+            blit('C:/PythonPrograms/Chess/images/wKnight.png', 2.65, 2, self.pos[0], self.pos[1], self.mov[0], self.mov[1])
+        else:
+            blit('C:/PythonPrograms/Chess/images/bKnight.png', 2.65, 2, self.pos[0], self.pos[1], self.mov[0], self.mov[1])
+
 class Queen(Actor):
     def light(self):
 
         light = []
 
+        m = 0
+
+        while True: #up left
+            if (self.pos[0] - (m + 1), self.pos[1] - (m + 1)) in board:
+                if board[(self.pos[0] - (m + 1), self.pos[1] - (m + 1))]:
+                    if self.color == board[(self.pos[0] - (m + 1), self.pos[1] - (m + 1))].color:
+                        break
+                    else:
+                        light.append([self.pos[0] - (m + 1), self.pos[1] - (m + 1)])
+                        break
+                else:
+                    light.append([self.pos[0] - (m + 1), self.pos[1] - (m + 1)])
+            else:
+                break
+
+            m += 1
+
+        m = 0
+
+        while True: #up right
+            if (self.pos[0] + (m + 1), self.pos[1] - (m + 1)) in board:
+                if board[(self.pos[0] + (m + 1), self.pos[1] - (m + 1))]:
+                    if self.color == board[(self.pos[0] + (m + 1), self.pos[1] - (m + 1))].color:
+                        break
+                    else:
+                        light.append([self.pos[0] + (m + 1), self.pos[1] - (m + 1)])
+                        break
+                else:
+                    light.append([self.pos[0] + (m + 1), self.pos[1] - (m + 1)])
+            else:
+                break
+
+            m += 1
+
+        m = 0
+
+        while True: #down right
+            if (self.pos[0] + (m + 1), self.pos[1] + (m + 1)) in board:
+                if board[(self.pos[0] + (m + 1), self.pos[1] + (m + 1))]:
+                    if self.color == board[(self.pos[0] + (m + 1), self.pos[1] + (m + 1))].color:
+                        break
+                    else:
+                        light.append([self.pos[0] + (m + 1), self.pos[1] + (m + 1)])
+                        break
+                else:
+                    light.append([self.pos[0] + (m + 1), self.pos[1] + (m + 1)])
+            else:
+                break
+
+            m += 1
+
+        m = 0
+
+        while True: #down left
+            if (self.pos[0] - (m + 1), self.pos[1] + (m + 1)) in board:
+                if board[(self.pos[0] - (m + 1), self.pos[1] + (m + 1))]:
+                    if self.color == board[(self.pos[0] - (m + 1), self.pos[1] + (m + 1))].color:
+                        break
+                    else:
+                        light.append([self.pos[0] - (m + 1), self.pos[1] + (m + 1)])
+                        break
+                else:
+                    light.append([self.pos[0] - (m + 1), self.pos[1] + (m + 1)])
+            else:
+                break
+
+            m += 1
+
+        m = 0
+
+        while True: #left
+            if (self.pos[0] - (m + 1), self.pos[1]) in board:
+                if board[(self.pos[0] - (m + 1), self.pos[1])]:
+                    if self.color == board[(self.pos[0] - (m + 1), self.pos[1])]:
+                        break
+                    else:
+                        light.append([self.pos[0] - (m + 1), self.pos[1]])
+                        break
+                else:
+                    light.append([self.pos[0] - (m + 1), self.pos[1]])
+            else:
+                break
+            
+            m += 1
+
+        m = 0
+
+        while True: #right
+            if (self.pos[0] + (m + 1), self.pos[1]) in board:
+                if board[(self.pos[0] + (m + 1), self.pos[1])]:
+                    if self.color == board[(self.pos[0] + (m + 1), self.pos[1])]:
+                        break
+                    else:
+                        light.append([self.pos[0] + (m + 1), self.pos[1]])
+                        break
+                else:
+                    light.append([self.pos[0] + (m + 1), self.pos[1]])
+            else:
+                break
+            
+            m += 1
+
+        m = 0
+
+        while True: #up
+            if (self.pos[0], self.pos[1] - (m + 1)) in board:
+                if board[(self.pos[0], self.pos[1] - (m + 1))]:
+                    if self.color == board[(self.pos[0], self.pos[1] - (m + 1))]:
+                        break
+                    else:
+                        light.append([self.pos[0], self.pos[1] - (m + 1)])
+                        break
+                else:
+                    light.append([self.pos[0], self.pos[1] - (m + 1)])
+            else:
+                break
+            
+            m += 1
+
+        m = 0
+
+        while True: #down
+            if (self.pos[0], self.pos[1] + (m + 1)) in board:
+                if board[(self.pos[0], self.pos[1] + (m + 1))]:
+                    if self.color == board[(self.pos[0], self.pos[1] + (m + 1))]:
+                        break
+                    else:
+                        light.append([self.pos[0], self.pos[1] + (m + 1)])
+                        break
+                else:
+                    light.append([self.pos[0], self.pos[1] + (m + 1)])
+            else:
+                break
+            
+            m += 1
+
         return light
+
+    def show(self):
+        if self.lif:
+            self.mov[0] = Mouse_x - addStatic[0]
+            self.mov[1] = Mouse_y - addStatic[1]
+            
+        if self.color:
+            blit('C:/PythonPrograms/Chess/images/wQueen.png', 2.65, 2, self.pos[0], self.pos[1], self.mov[0], self.mov[1])
+        else:
+            blit('C:/PythonPrograms/Chess/images/bQueen.png', 2.65, 2, self.pos[0], self.pos[1], self.mov[0], self.mov[1])
 
 class King(Actor):
     def light(self):
@@ -290,6 +460,79 @@ class King(Actor):
 
         return light
 
+    def show(self):
+        if self.lif:
+            self.mov[0] = Mouse_x - addStatic[0]
+            self.mov[1] = Mouse_y - addStatic[1]
+            
+        if self.color:
+            blit('C:/PythonPrograms/Chess/images/wKing.png', 2.65, 2, self.pos[0], self.pos[1], self.mov[0], self.mov[1])
+        else:
+            blit('C:/PythonPrograms/Chess/images/bKing.png', 2.65, 2, self.pos[0], self.pos[1], self.mov[0], self.mov[1])
+
+class pawnBlack(Actor):
+    def light(self):
+
+        light = []
+
+        if not board[(self.pos[0], self.pos[1] + 1)]:
+            light.append([self.pos[0], self.pos[1] + 1])
+
+            if self.pos[1] == 1:
+                if not board[(self.pos[0], self.pos[1] + 2)]:
+                    light.append([self.pos[0], self.pos[1] + 2])
+
+        if (self.pos[0] - 1, self.pos[1] + 1) in board:
+            if board[(self.pos[0] - 1, self.pos[1] + 1)]:
+                if board[(self.pos[0] - 1, self.pos[1] + 1)].color:
+                    light.append([self.pos[0] - 1, self.pos[1] + 1])
+
+        if (self.pos[0] + 1, self.pos[1] + 1) in board:
+            if board[(self.pos[0] + 1, self.pos[1] + 1)]:
+                if board[(self.pos[0] + 1, self.pos[1] + 1)].color:
+                    light.append([self.pos[0] - 1, self.pos[1] + 1])
+
+        return light
+
+    def show(self):
+        if self.lif:
+            self.mov[0] = Mouse_x - addStatic[0]
+            self.mov[1] = Mouse_y - addStatic[1]
+            
+        blit('C:/PythonPrograms/Chess/images/bPawn.png', 2.65, 2, self.pos[0], self.pos[1], self.mov[0], self.mov[1])
+
+class pawnWhite(Actor):
+    def light(self):
+
+        light = []
+
+        if not board[(self.pos[0], self.pos[1] - 1)]:
+            light.append([self.pos[0], self.pos[1] - 1])
+
+            if self.pos[1] == 6:
+                if not board[(self.pos[0], self.pos[1] - 2)]:
+                    light.append([self.pos[0], self.pos[1] - 2])
+
+        if (self.pos[0] - 1, self.pos[1] - 1) in board:
+            if board[(self.pos[0] - 1, self.pos[1] - 1)]:
+                if not board[(self.pos[0] - 1, self.pos[1] - 1)].color:
+                    light.append([self.pos[0] - 1, self.pos[1] - 1])
+
+        if (self.pos[0] + 1, self.pos[1] - 1) in board:
+            if board[(self.pos[0] + 1, self.pos[1] - 1)]:
+                if not board[(self.pos[0] + 1, self.pos[1] - 1)].color:
+                    light.append([self.pos[0] - 1, self.pos[1] - 1])
+
+        return light
+
+    def show(self):
+        if self.lif:
+            self.mov[0] = Mouse_x - addStatic[0]
+            self.mov[1] = Mouse_y - addStatic[1]
+            
+        blit('C:/PythonPrograms/Chess/images/wPawn.png', 2.65, 2, self.pos[0], self.pos[1], self.mov[0], self.mov[1])
+
+
 screen = pygame.display.set_mode((900, 750), pygame.RESIZABLE)
 img = pygame.image.load('C:\PythonPrograms\Chess\images\ImageCalibrator1.png').convert()
 pressed = pygame.key.get_pressed()
@@ -300,7 +543,6 @@ addStatic = [0, 0]
 click = False
 current = 0
 placing = False
-light = []
 
 #1 == 'white'; 0 == 'black';
 wRookLeft = Rook([0, 7], 'wRookLeft', 1)
@@ -319,24 +561,40 @@ wQueen = Queen([4, 7], 'wQueen', 1)
 bQueen = Queen([4, 0], 'bQueen', 0)
 wKing = King([3, 7], 'wKing', 1)
 bKing = King([3, 0], 'bKing', 0)
+wPawn1 = pawnWhite([0, 6], 'wPawn1', 1)
+wPawn2 = pawnWhite([1, 6], 'wPawn2', 1)
+wPawn3 = pawnWhite([2, 6], 'wPawn3', 1)
+wPawn4 = pawnWhite([3, 6], 'wPawn4', 1)
+wPawn5 = pawnWhite([4, 6], 'wPawn5', 1)
+wPawn6 = pawnWhite([5, 6], 'wPawn6', 1)
+wPawn7 = pawnWhite([6, 6], 'wPawn7', 1)
+wPawn8 = pawnWhite([7, 6], 'wPawn8', 1)
+bPawn1 = pawnBlack([0, 1], 'bPawn1', 0)
+bPawn2 = pawnBlack([1, 1], 'bPawn2', 0)
+bPawn3 = pawnBlack([2, 1], 'bPawn3', 0)
+bPawn4 = pawnBlack([3, 1], 'bPawn4', 0)
+bPawn5 = pawnBlack([4, 1], 'bPawn5', 0)
+bPawn6 = pawnBlack([5, 1], 'bPawn6', 0)
+bPawn7 = pawnBlack([6, 1], 'bPawn7', 0)
+bPawn8 = pawnBlack([7, 1], 'bPawn8', 0)
 
 pieces = [
-    wRookLeft,
-    wRookRight,
-    bRookLeft,
-    bRookRight,
-    wBishopLeft,
-    wBishopRight,
-    bBishopLeft,
-    bBishopRight,
-    wKnightLeft,
-    wKnightRight,
-    bKnightLeft,
-    bKnightRight,
-    wQueen,
-    bQueen,
-    wKing,
-    bKing,
+    wRookLeft, wRookRight,
+    bRookLeft, bRookRight,
+    wBishopLeft, wBishopRight,
+    bBishopLeft, bBishopRight,
+    wKnightLeft, wKnightRight,
+    bKnightLeft, bKnightRight,
+    wQueen, bQueen,
+    wKing, bKing,
+    wPawn1, wPawn2,
+    wPawn3, wPawn4,
+    wPawn5, wPawn6,
+    wPawn7, wPawn8,
+    bPawn1, bPawn2,
+    bPawn3, bPawn4,
+    bPawn5, bPawn6,
+    bPawn7, bPawn8,
 ]
 
 board = {}
